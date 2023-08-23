@@ -1,4 +1,3 @@
-
 # Windows Update Script
 
 This PowerShell script, authored by Tycho Loke and distributed by PeopleRock B.V, allows you to check for and install Windows updates on a machine. The script logs its output to a specified file.
@@ -11,18 +10,16 @@ This PowerShell script, authored by Tycho Loke and distributed by PeopleRock B.V
 ## Usage
 1. Clone or download the script from this repository.
 2. Open a PowerShell window with elevated permissions.
-3. Run the script by typing .\Windows-Update.ps1.
-4. The script will check if the necessary modules and packages (NuGet and PSWindowsUpdate) are installed. If they are not, the script will install them asynchronously.
+3. Run the script by typing `.\Windows-Update.ps1`.
+4. The script will check if the necessary modules and packages (NuGet and PSWindowsUpdate) are installed. If they are not, the script will install them asynchronously, bypassing the publisher check.
 5. The script will then import the PSWindowsUpdate module.
 6. The script will check for available updates and install them.
-7. The script will log its output to the specified file (C:\temp\windowsupdate.log).
+7. The script will log its output to the specified file (`C:\temp\windowsupdate.log`).
 
 ## Notes
-- The script uses the -IgnoreReboot switch when running Get-WindowsUpdate and Install-WindowsUpdate, so the machine will not reboot during the installation process.
-- The script uses the -AcceptAll switch when running Install-WindowsUpdate to accept all the updates without prompting for confirmation.
-- The script uses the -RequiredVersion switch when installing the NuGet package provider to a specific version.
-- The script uses the -IncludeDependencies switch when bootstrapping the NuGet package provider to install any additional dependencies.
-- The script uses the -force switch for Find-PackageProvider instead of Find-Package
+- The script uses the `-IgnoreReboot` switch when running `Get-WindowsUpdate` and `Install-WindowsUpdate`, so the machine will not reboot during the installation process.
+- The script uses the `-AcceptAll` switch when running `Install-WindowsUpdate` to accept all the updates without prompting for confirmation.
+- The script will ensure that the "C:\temp" directory exists before starting the transcript.
 - The script will overwrite the log file if it already exists.
 
 ## Troubleshooting
@@ -35,6 +32,3 @@ If you want to improve this script, please feel free to open a pull request.
 
 ## License
 This script is licensed under the MIT license.
-
-
-
