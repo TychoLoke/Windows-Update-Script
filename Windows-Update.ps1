@@ -15,9 +15,14 @@
     MIT License - Free to use and distribute
 #>
 
-# Define logging path
-$LogDirectory = "C:\temp"
-$LogFile = "$LogDirectory\windowsupdate.log"
+[CmdletBinding()]
+param(
+    [string]$LogDirectory = "C:\temp",
+    [switch]$PreviewOnly,
+    [switch]$AllowReboot
+)
+
+$LogFile = Join-Path -Path $LogDirectory -ChildPath "windowsupdate.log"
 
 # Ensure the log directory exists
 if (!(Test-Path -Path $LogDirectory)) {
@@ -71,8 +76,21 @@ function Run-WindowsUpdate {
         Write-Output "`n[INFO] Checking for Windows updates..."
         $Updates = Get-WindowsUpdate -IgnoreReboot
         if ($Updates) {
+            Write-Output "[INFO] Found $($Updates.Count) update(s)."
+            $Updates | Select-Object Title, KB, Size | Format-Table | Out-String | Write-Output
+
+            if ($PreviewOnly) {
+                Write-Output "[INFO] PreviewOnly specified. No updates were installed."
+                return
+            }
+
             Write-Output "[INFO] Updates available, proceeding with installation..."
-            Install-WindowsUpdate -AcceptAll -IgnoreReboot | Out-String | Write-Output
+            if ($AllowReboot) {
+                Install-WindowsUpdate -AcceptAll | Out-String | Write-Output
+            } else {
+                Install-WindowsUpdate -AcceptAll -IgnoreReboot | Out-String | Write-Output
+            }
+
             Write-Output "[SUCCESS] Windows updates installed successfully!"
         } else {
             Write-Output "[INFO] No updates available."

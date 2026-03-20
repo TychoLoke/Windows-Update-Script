@@ -9,6 +9,7 @@ Developed by **Tycho Löke** and distributed by **PeopleRock B.V.**, this script
 ✅ **Detailed Logging** – Creates a transcript at `C:\temp\windowsupdate.log` for easy troubleshooting.  
 ✅ **User-Friendly Output** – Provides clear status updates during execution.  
 ✅ **Non-Interruptive Execution** – Updates are installed **without forcing a reboot**.  
+✅ **Preview Mode** – Lets you inspect available updates before installing them.
 
 ## 🛠 Prerequisites  
 Before running the script, ensure you meet the following requirements:  
@@ -37,6 +38,18 @@ Run the script using:
 .\Windows-Update.ps1
 ```
 
+Preview only:
+
+```powershell
+.\Windows-Update.ps1 -PreviewOnly
+```
+
+Allow reboot during installation:
+
+```powershell
+.\Windows-Update.ps1 -AllowReboot
+```
+
 ### **4️⃣ What Happens Next?**  
 ✅ The script **checks for required modules** (`NuGet` & `PSWindowsUpdate`).  
 ✅ If missing, it **installs them automatically**.  
@@ -49,6 +62,8 @@ Run the script using:
 - The script applies `-AcceptAll` to install updates **without confirmation prompts**.  
 - If `C:\temp` does not exist, it **creates the directory** automatically.  
 - The log file **appends new logs** instead of overwriting them.  
+- Use `-PreviewOnly` to review available updates without installing them.
+- Use `-AllowReboot` if you want Windows Update to handle reboot-required installs normally.
 
 ## 🛠 Troubleshooting  
 
