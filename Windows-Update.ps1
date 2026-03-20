@@ -37,7 +37,7 @@ Write-Output "  Windows Update Script  "
 Write-Output "=========================`n"
 
 # Function to check and install missing modules
-function Ensure-Module {
+function Install-RequiredModule {
     param (
         [string]$ModuleName,
         [string]$ProviderName = $null
@@ -53,13 +53,13 @@ function Ensure-Module {
             Write-Output "[INFO] Module already installed: $ModuleName"
         }
     } catch {
-        Write-Output "[ERROR] Failed to install module $ModuleName: $_"
+        Write-Output "[ERROR] Failed to install module ${ModuleName}: $($_.Exception.Message)"
         Exit 1
     }
 }
 
 # Ensure required modules are installed
-Ensure-Module -ModuleName "PSWindowsUpdate" -ProviderName "NuGet"
+Install-RequiredModule -ModuleName "PSWindowsUpdate" -ProviderName "NuGet"
 
 # Import the PSWindowsUpdate module
 try {
@@ -71,7 +71,12 @@ try {
 }
 
 # Function to check and install Windows updates
-function Run-WindowsUpdate {
+function Invoke-WindowsUpdateJob {
+    param(
+        [switch]$PreviewOnlyMode,
+        [switch]$AllowRebootMode
+    )
+
     try {
         Write-Output "`n[INFO] Checking for Windows updates..."
         $Updates = Get-WindowsUpdate -IgnoreReboot
@@ -79,13 +84,13 @@ function Run-WindowsUpdate {
             Write-Output "[INFO] Found $($Updates.Count) update(s)."
             $Updates | Select-Object Title, KB, Size | Format-Table | Out-String | Write-Output
 
-            if ($PreviewOnly) {
+            if ($PreviewOnlyMode) {
                 Write-Output "[INFO] PreviewOnly specified. No updates were installed."
                 return
             }
 
             Write-Output "[INFO] Updates available, proceeding with installation..."
-            if ($AllowReboot) {
+            if ($AllowRebootMode) {
                 Install-WindowsUpdate -AcceptAll | Out-String | Write-Output
             } else {
                 Install-WindowsUpdate -AcceptAll -IgnoreReboot | Out-String | Write-Output
@@ -102,7 +107,7 @@ function Run-WindowsUpdate {
 }
 
 # Run the Windows Update process
-Run-WindowsUpdate
+Invoke-WindowsUpdateJob -PreviewOnlyMode:$PreviewOnly -AllowRebootMode:$AllowReboot
 
 # Stop logging
 Stop-Transcript
