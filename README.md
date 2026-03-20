@@ -23,8 +23,8 @@ Before running the script, ensure you meet the following requirements:
 Clone this repository or download the script file manually.  
 
 ```powershell
-git clone https://github.com/your-repo/windows-update-script.git
-cd windows-update-script
+git clone https://github.com/TychoLoke/Windows-Update-Script.git
+cd Windows-Update-Script
 ```
 
 ### **2️⃣ Run PowerShell as Administrator**  
