@@ -1,0 +1,46 @@
+name: PowerShell CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install PSScriptAnalyzer
+        shell: pwsh
+        run: Install-Module PSScriptAnalyzer -Scope CurrentUser -Force
+
+      - name: Validate PowerShell scripts
+        shell: pwsh
+        run: |
+          $scripts = Get-ChildItem -Path . -Recurse -Filter *.ps1
+          if (-not $scripts) {
+            throw "No PowerShell scripts found."
+          }
+
+          $parseErrors = @()
+          foreach ($script in $scripts) {
+            $tokens = $null
+            $errors = $null
+            [System.Management.Automation.Language.Parser]::ParseFile($script.FullName, [ref]$tokens, [ref]$errors) | Out-Null
+            if ($errors) {
+              $parseErrors += $errors
+            }
+          }
+
+          if ($parseErrors.Count -gt 0) {
+            $parseErrors | Format-List
+            throw "PowerShell parser errors found."
+          }
+
+          $results = Invoke-ScriptAnalyzer -Path $scripts.FullName
+          $errorsOnly = $results | Where-Object Severity -eq "Error"
+          if ($errorsOnly) {
+            $errorsOnly | Format-Table -AutoSize
+            throw "PSScriptAnalyzer errors found."
+          }
